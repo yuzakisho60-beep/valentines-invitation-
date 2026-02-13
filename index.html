@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Magical Love Envelope ✨</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Dancing Script','Georgia',cursive;
+background:linear-gradient(-45deg,#ff9a9e,#fecfef,#ff9a9e);
+background-size:400% 400%;
+animation:gradientShift 15s ease infinite;
+min-height:100vh;
+display:grid;
+place-items:center;
+overflow:hidden;
+position:relative;
+transition:1s;
+}
+
+@keyframes gradientShift{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+body.night{
+background:linear-gradient(-45deg,#1a1a2e,#16213e,#1a1a2e);
+}
+
+.control-panel{
+position:fixed;
+top:20px;
+right:20px;
+z-index:999;
+display:flex;
+gap:10px;
+}
+
+.control-panel button{
+padding:10px 18px;
+border:none;
+border-radius:25px;
+cursor:pointer;
+font-size:16px;
+}
+
+.presentation-container{text-align:center;z-index:10;}
+
+/* 🌸 Sakura & 💖 Hearts Floating */
+
+.sakura, .heart {
+position:fixed;
+top:-50px;
+pointer-events:none;
+z-index:1;
+opacity:0.9;
+animation:floatDown linear infinite;
+}
+
+@keyframes floatDown{
+0%{
+transform:translateY(-50px) translateX(0px) rotate(0deg);
+opacity:0;
+}
+10%{opacity:1;}
+50%{
+transform:translateY(50vh) translateX(40px) rotate(180deg);
+}
+100%{
+transform:translateY(110vh) translateX(-60px) rotate(360deg);
+opacity:0;
+}
+}
+
+
+/* ✨ Particles */
+.particle{
+position:fixed;
+border-radius:50%;
+pointer-events:none;
+animation:floatUp linear infinite;
+z-index:1;
+opacity:0.6;
+}
+
+@keyframes floatUp{
+0%{transform:translateY(0) scale(0.5);opacity:0;}
+10%{opacity:0.7;}
+100%{transform:translateY(-110vh) scale(1.2);opacity:0;}
+}
+
+.intro-text{
+font-size:3em;
+margin-bottom:40px;
+cursor:pointer;
+}
+
+.envelope-stage{
+perspective:1200px;
+opacity:0;
+transform:scale(.8);
+transition:1s;
+}
+
+.envelope-stage.active{
+opacity:1;
+transform:scale(1);
+}
+
+.envelope{
+width:800px;
+height:620px;
+position:relative;
+transform-style:preserve-3d;
+transition:1.2s;
+}
+
+.envelope.flipped{transform:rotateY(-180deg);}
+
+.envelope-front,.letter-paper{
+position:absolute;
+width:100%;
+height:100%;
+border-radius:25px;
+backface-visibility:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.envelope-front{
+background:linear-gradient(145deg,#ffdde1,#fd79a8);
+}
+
+.letter-paper{
+background:white;
+transform:rotateY(180deg);
+flex-direction:column;
+padding:40px;
+overflow:auto;
+}
+
+.handwritten{font-size:30px;text-align:center;}
+
+.highlight-box{
+margin:20px auto;
+padding:15px;
+border-radius:15px;
+border:1.5px dashed #ff6b9d;
+background:rgba(255,107,157,.15);
+}
+
+.signature{margin-top:20px;font-size:28px;}
+
+.love-buttons{
+margin-top:20px;
+display:flex;
+justify-content:center;
+gap:20px;
+}
+
+.love-buttons button{
+padding:12px 30px;
+font-size:20px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+transition:.3s;
+}
+
+.love-buttons button:hover{transform:scale(1.1);}
+
+.love-buttons button:first-child{
+background:#ff6b9d;color:white;
+}
+
+.love-buttons button:last-child{
+background:#ddd;
+}
+
+.love-modal{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.5);
+display:flex;
+justify-content:center;
+align-items:center;
+visibility:hidden;
+opacity:0;
+transition:.3s;
+z-index:1000;
+}
+
+.love-modal.active{
+visibility:visible;
+opacity:1;
+}
+
+.love-modal-content{
+background:white;
+padding:30px 40px;
+border-radius:20px;
+text-align:center;
+font-size:28px;
+}
+
+.modal-buttons{
+margin-top:20px;
+display:flex;
+justify-content:center;
+gap:15px;
+}
+
+.modal-buttons button{
+padding:15px 25px;
+border:none;
+border-radius:25px;
+cursor:pointer;
+color:white;
+font-size:22px;
+}
+
+#catContainer{
+margin-top:15px;
+font-size:60px;
+}
+
+#finalMessage{
+margin-top:25px;
+font-size:32px;
+color:#ff4d88;
+display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="control-panel">
+<button onclick="toggleMusic()">🎵 Music</button>
+<button onclick="toggleNight()">🌙 Night</button>
+</div>
+
+<audio id="bgMusic" loop preload="auto"></audio>
+
+
+<div class="presentation-container">
+<div class="intro-text" id="introText">✨ From Yours Truly ✨</div>
+
+<div class="envelope-stage" id="envelopeStage">
+<div class="envelope" id="envelope">
+
+<div class="envelope-front">
+<div>
+<div style="font-size:60px;">💌</div>
+<h2 style="font-size:45px;">Open Me!</h2>
+</div>
+</div>
+
+<div class="letter-paper">
+<div class="handwritten">
+
+<div>My Dearest KRIYUUU,</div>
+
+<div style="margin-top:20px;">
+💝 <strong>Special Valentine's Invitation</strong> 💝
+</div>
+
+<div class="highlight-box">
+Let's celebrate <strong>February 14th</strong><br>
+<strong>COZY WATCH PARTY</strong> 🍿✨<br>
+</div>
+
+<div>
+Will you be my Valentine date? 🌹
+</div>
+
+<div class="love-buttons">
+<button onclick="handleYes()">💖 Yes</button>
+<button onclick="handleNo()">🙈 No</button>
+</div>
+
+<div id="catContainer"></div>
+
+<div id="finalMessage">
+💍 She Said YES! 💖<br>
+February 14th is officially ours ✨
+</div>
+
+<div class="signature">
+Yours Forever 💕<br><strong>SAMMUUUUU</strong>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal -->
+<div id="loveModal" class="love-modal">
+<div class="love-modal-content">
+<div id="modalText"></div>
+<div id="modalButtons" class="modal-buttons"></div>
+</div>
+</div>
+
+<script>
+
+/* Music */
+/* 🎵 Multi Song System */
+/* 🎵 Multi Song Auto-Start System */
+
+const bgMusic = document.getElementById("bgMusic");
+
+const songs = [
+{ name: "MERRY-GO-ROUND💕", src: "Joe Hisaishi - Merry-Go-Round of Life (from Howl’s Moving Castle).mp3" },
+{ name: "BLUE🌸", src: "yung kai - blue (Lyrics).mp3" }
+
+];
+
+let currentSongIndex = 0;
+let isPlaying = false;
+
+/* 🔥 AUTO START ON PAGE LOAD */
+window.addEventListener("load", () => {
+startSong(0);
+});
+
+function startSong(index){
+currentSongIndex = index;
+bgMusic.src = songs[index].src;
+bgMusic.volume = 0.4;
+
+bgMusic.play().then(()=>{
+isPlaying = true;
+}).catch(()=>{
+// If autoplay blocked, start on first click anywhere
+document.body.addEventListener("click",()=>{
+if(!isPlaying){
+bgMusic.play();
+isPlaying = true;
+}
+},{ once:true });
+});
+}
+
+/* 🎵 Music Button Opens Selector */
+function toggleMusic(){
+
+let songOptions = songs.map((song,index)=>({
+text: song.name,
+color: index === currentSongIndex ? "#ff6b9d" : "#999",
+action: ()=>selectSong(index)
+}));
+
+if(isPlaying){
+songOptions.push({
+text:"Stop Music ⏹️",
+color:"#444",
+action: stopMusic
+});
+}
+
+openModal("🎵 Choose your love soundtrack", songOptions);
+}
+
+function selectSong(index){
+startSong(index);
+closeModal();
+}
+
+function stopMusic(){
+bgMusic.pause();
+isPlaying = false;
+closeModal();
+}
+
+function createSakura(){
+const sakura=document.createElement("div");
+sakura.classList.add("sakura");
+sakura.innerHTML="🌸";
+
+const size = Math.random()*30 + 15; // random size
+sakura.style.fontSize = size + "px";
+
+sakura.style.left = Math.random()*100 + "vw";
+
+const duration = Math.random()*8 + 6; // random speed
+sakura.style.animationDuration = duration + "s";
+
+document.body.appendChild(sakura);
+
+setTimeout(()=>sakura.remove(), duration*1000);
+}
+
+setInterval(createSakura, 500);
+
+function createHeart(){
+const heart=document.createElement("div");
+heart.classList.add("heart");
+
+const hearts=["💖","💘","💗","💞","💕"];
+heart.innerHTML = hearts[Math.floor(Math.random()*hearts.length)];
+
+const size = Math.random()*35 + 20;
+heart.style.fontSize = size + "px";
+
+heart.style.left = Math.random()*100 + "vw";
+
+const duration = Math.random()*7 + 6;
+heart.style.animationDuration = duration + "s";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>heart.remove(), duration*1000);
+}
+
+setInterval(createHeart, 700);
+
+
+
+
+function toggleNight(){document.body.classList.toggle("night");}
+
+/* Envelope */
+const intro=document.getElementById("introText");
+const stage=document.getElementById("envelopeStage");
+const envelope=document.getElementById("envelope");
+
+intro.onclick=()=>{
+intro.style.display="none";
+stage.classList.add("active");
+}
+
+stage.onclick=()=>{
+envelope.classList.add("flipped");
+}
+
+/* LOVE GAME */
+let noCount=0;
+const modal=document.getElementById("loveModal");
+const modalText=document.getElementById("modalText");
+const modalButtons=document.getElementById("modalButtons");
+
+function openModal(text,buttons){
+modalText.innerHTML=text;
+modalButtons.innerHTML="";
+buttons.forEach(btn=>{
+const b=document.createElement("button");
+b.innerText=btn.text;
+b.style.background=btn.color;
+b.onclick=btn.action;
+modalButtons.appendChild(b);
+});
+modal.classList.add("active");
+}
+
+function closeModal(){modal.classList.remove("active");}
+
+/* ✅ FINAL YES LOGIC */
+function handleYes(){
+closeModal();
+document.querySelector(".love-buttons").style.display="none";
+document.getElementById("finalMessage").style.display="block";
+document.getElementById("catContainer").innerHTML="🐱💖✨";
+}
+
+/* NO FLOW */
+function handleNo(){
+noCount++;
+
+if(noCount===1){
+openModal("Are you sure? 🥺",[
+{text:"Yes 😈",color:"#999",action:secondQuestion},
+{text:"No 💖",color:"#ff6b9d",action:handleYes}
+]);
+}
+else if(noCount===2){   
+openModal("🐱💔<br><br>Please?? 🥺",[
+{text:"Okay fine 💖",color:"#ff6b9d",action:handleYes},
+{text:"Still No 😭",color:"#999",action:finalTrap}
+]);
+
+}
+else{
+finalTrap();
+}
+}
+
+function secondQuestion(){
+openModal("Really?? 😢",[
+{text:"Yes 😭",color:"#999",action:chocolateQuestion},
+{text:"No 💖",color:"#ff6b9d",action:handleYes}
+]);
+}
+
+function chocolateQuestion(){
+openModal("If I buy you chocolates then?? 🍫",[
+{text:"Yes 😋",color:"#ff6b9d",action:handleYes},
+{text:"No 🙈",color:"#999",action:sadCatPopup}
+]);
+}
+function sadCatPopup(){
+openModal("🐱💔<br><br>ouchh...that hurt..think again please...huhuhuu",[ 
+{text:"hmm…",color:"#999",action:closeModal}
+]);
+}
+
+
+function finalTrap(){
+openModal("Ok final question… Will you be my Valentine forever?? 💍💖",[
+{text:"Yes 💍",color:"#ff6b9d",action:handleYes},
+{text:"Absolutely Yes 💖",color:"#ff85c1",action:handleYes}
+]);
+}
+</script>
+
+</body>
+</html>
